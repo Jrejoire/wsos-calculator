@@ -23,26 +23,55 @@ describe("calculator", () => {
     //Calling create instance - Set our calculator keypair as a signer
     await program.methods.create(text).accounts(
       {
-          calculator: calculatorPair.publicKey,
-          user: programProvider.wallet.publicKey,
-          systemProgram: SystemProgram.programId,
+        calculator: calculatorPair.publicKey,
+        user: programProvider.wallet.publicKey,
+        systemProgram: SystemProgram.programId,
       }
-  ).signers([calculatorPair]).rpc()
+    ).signers([calculatorPair]).rpc()
 
-  //We fecth the account and read if the string is actually in the account
-  const account = await program.account.calculator.fetch(calculatorPair.publicKey)
-  expect(account.greeting).to.eql(text)
+    //We fecth the account and read if the string is actually in the account
+    const account = await program.account.calculator.fetch(calculatorPair.publicKey)
+    expect(account.greeting).to.eql(text)
   });
 
   //Another test step - test out addition
-  it('Addition',async () => {
+  it('Addition', async () => {
     await program.methods.add(new anchor.BN(2), new anchor.BN(3))
-    .accounts({
+      .accounts({
         calculator: calculatorPair.publicKey,
-    })
-    .rpc()
+      })
+      .rpc()
     const account = await program.account.calculator.fetch(calculatorPair.publicKey)
     expect(account.result).to.eql(new anchor.BN(5))
-})
+  })
 
+  it('Substraction', async () => {
+    await program.methods.substract(new anchor.BN(3), new anchor.BN(2))
+      .accounts({
+        calculator: calculatorPair.publicKey,
+      })
+      .rpc()
+    const account = await program.account.calculator.fetch(calculatorPair.publicKey)
+    expect(account.result).to.eql(new anchor.BN(1))
+  })
+
+  it('Division', async () => {
+    await program.methods.divide(new anchor.BN(6), new anchor.BN(2))
+      .accounts({
+        calculator: calculatorPair.publicKey,
+      })
+      .rpc()
+    const account = await program.account.calculator.fetch(calculatorPair.publicKey)
+    expect(account.result).to.eql(new anchor.BN(3))
+  })
+
+  it('Multiplication', async () => {
+    await program.methods.multiply(new anchor.BN(2), new anchor.BN(3))
+      .accounts({
+        calculator: calculatorPair.publicKey,
+      })
+      .rpc()
+    const account = await program.account.calculator.fetch(calculatorPair.publicKey)
+    expect(account.result).to.eql(new anchor.BN(6))
+  })
 });
